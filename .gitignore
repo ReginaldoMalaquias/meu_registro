@@ -1,0 +1,6 @@
+# meu_registro/.gitignore
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+registro.db # Exclua o banco de dados local

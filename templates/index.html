@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Registro Pessoal</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        h1, h2 { color: #0056b3; }
+        .container { max-width: 900px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        form { margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9; }
+        form label, form input, form select, form button { display: block; margin-bottom: 10px; width: calc(100% - 22px); padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+        form button { background-color: #007bff; color: white; border: none; cursor: pointer; width: auto; padding: 10px 15px; }
+        form button:hover { background-color: #0056b3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #e2e2e2; }
+        .action-form { display: inline-block; margin-left: 5px; }
+        .action-form button { background-color: #dc3545; }
+        .action-form button:hover { background-color: #c82333; }
+        .status-update-form button { background-color: #28a745; }
+        .status-update-form button:hover { background-color: #218838; }
+        .status-select { width: auto; display: inline-block; margin-right: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Meu Registro Pessoal</h1>
+
+        <h2>Tarefas</h2>
+        <form action="/adicionar_tarefa" method="post">
+            <label for="tarefa_nome">Nome da Tarefa:</label>
+            <input type="text" id="tarefa_nome" name="nome" required>
+            <label for="tarefa_data_conclusao">Data de Conclusão (Opcional):</label>
+            <input type="date" id="tarefa_data_conclusao" name="data_conclusao">
+            <button type="submit">Adicionar Tarefa</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Data Conclusão</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tarefa in tarefas %}
+                <tr>
+                    <td>{{ tarefa.id }}</td>
+                    <td>{{ tarefa.nome }}</td>
+                    <td>{{ tarefa.data_conclusao if tarefa.data_conclusao else 'N/A' }}</td>
+                    <td>
+                        {{ tarefa.status }}
+                        <form action="/atualizar_status_tarefa/{{ tarefa.id }}" method="post" class="action-form status-update-form">
+                            <select name="status" class="status-select">
+                                <option value="Pendente" {% if tarefa.status == 'Pendente' %}selected{% endif %}>Pendente</option>
+                                <option value="Em Andamento" {% if tarefa.status == 'Em Andamento' %}selected{% endif %}>Em Andamento</option>
+                                <option value="Concluído" {% if tarefa.status == 'Concluído' %}selected{% endif %}>Concluído</option>
+                                <option value="Cancelado" {% if tarefa.status == 'Cancelado' %}selected{% endif %}>Cancelado</option>
+                            </select>
+                            <button type="submit">Atualizar</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/excluir_tarefa/{{ tarefa.id }}" method="post" class="action-form">
+                            <button type="submit">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not tarefas %}
+                <tr>
+                    <td colspan="5">Nenhuma tarefa registrada.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <h2>Cursos</h2>
+        <form action="/adicionar_curso" method="post">
+            <label for="curso_nome">Nome do Curso:</label>
+            <input type="text" id="curso_nome" name="nome" required>
+            <label for="curso_instituicao">Instituição:</label>
+            <input type="text" id="curso_instituicao" name="instituicao">
+            <button type="submit">Adicionar Curso</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Instituição</th>
+                    <th>Progresso</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for curso in cursos %}
+                <tr>
+                    <td>{{ curso.id }}</td>
+                    <td>{{ curso.nome }}</td>
+                    <td>{{ curso.instituicao if curso.instituicao else 'N/A' }}</td>
+                    <td>
+                        {{ curso.progresso }}
+                        <form action="/atualizar_progresso_curso/{{ curso.id }}" method="post" class="action-form status-update-form">
+                            <select name="progresso" class="status-select">
+                                <option value="Não Iniciado" {% if curso.progresso == 'Não Iniciado' %}selected{% endif %}>Não Iniciado</option>
+                                <option value="Em Andamento" {% if curso.progresso == 'Em Andamento' %}selected{% endif %}>Em Andamento</option>
+                                <option value="Concluído" {% if curso.progresso == 'Concluído' %}selected{% endif %}>Concluído</option>
+                            </select>
+                            <button type="submit">Atualizar</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/excluir_curso/{{ curso.id }}" method="post" class="action-form">
+                            <button type="submit">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not cursos %}
+                <tr>
+                    <td colspan="5">Nenhum curso registrado.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
